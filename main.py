@@ -8,6 +8,10 @@ screen = new_screen()
 color = [ 0, 255, 0 ]
 edges = []
 polygons = []
+top = new_matrix()
+ident(top)
+cstack = [top]
+print cstack
 transform = new_matrix()
 
-parse_file( 'script', edges, polygons, transform, screen, color )
+parse_file( 'script2', edges, polygons, transform, cstack, screen, color )

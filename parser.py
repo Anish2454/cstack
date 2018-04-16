@@ -50,9 +50,9 @@ The file follows the following format:
 
 See the file script for an example of the file format
 """
-ARG_COMMANDS = [ 'line', 'scale', 'move', 'rotate', 'save', 'circle', 'bezier', 'hermite', 'box', 'sphere', 'torus' ]
+ARG_COMMANDS = [ 'line', 'scale', 'move', 'rotate', 'save', 'circle', 'bezier', 'hermite', 'box', 'sphere', 'torus', 'push', 'pop' ]
 
-def parse_file( fname, edges, polygons, transform, screen, color ):
+def parse_file( fname, edges, polygons, transform, cstack, screen, color ):
 
     f = open(fname)
     lines = f.readlines()
@@ -113,12 +113,12 @@ def parse_file( fname, edges, polygons, transform, screen, color ):
         elif line == 'scale':
             #print 'SCALE\t' + str(args)
             t = make_scale(float(args[0]), float(args[1]), float(args[2]))
-            matrix_mult(t, transform)
+            stack_matrix_mult(cstack, t)
 
         elif line == 'move':
-            #print 'MOVE\t' + str(args)
+            print 'MOVE\t' + str(args)
             t = make_translate(float(args[0]), float(args[1]), float(args[2]))
-            matrix_mult(t, transform)
+            stack_matrix_mult(cstack, t)
 
         elif line == 'rotate':
             #print 'ROTATE\t' + str(args)
@@ -130,19 +130,15 @@ def parse_file( fname, edges, polygons, transform, screen, color ):
                 t = make_rotY(theta)
             else:
                 t = make_rotZ(theta)
-            matrix_mult(t, transform)
-
-        elif line == 'clear':
-            edges = []
-            polygons = []
-
-        elif line == 'ident':
-            ident(transform)
-
-        elif line == 'apply':
-            matrix_mult( transform, edges )
-            matrix_mult( transform, polygons )
-
+            stack_matrix_mult(cstack, t)
+        
+        elif line == 'push':
+        	top = [row[:] for row in cstack[-1]]
+        	cstack.append(top)
+        
+        elif line == 'pop':
+        	cstack.pop()
+        	
         elif line == 'display' or line == 'save':
             clear_screen(screen)
             draw_lines(edges, screen, color)

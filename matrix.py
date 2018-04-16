@@ -105,6 +105,29 @@ def matrix_mult( m1, m2 ):
                             m1[3][r] * tmp[3])
         point+= 1
 
+#m1 * m2 -> m2
+def stack_matrix_mult(cstack, m2):
+
+	m1 = cstack.pop()
+	point = 0
+	for row in m2:
+		#get a copy of the next point
+		tmp = row[:]
+        
+        for r in range(4):
+            m2[point][r] = (m1[0][r] * tmp[0] +
+                            m1[1][r] * tmp[1] +
+                            m1[2][r] * tmp[2] +
+                            m1[3][r] * tmp[3])
+        point+= 1
+    
+	top = [row[:] for row in m2]
+	cstack.append(top)
+	print "top: "
+	print_matrix(cstack[-1])
+	print "bottom: "
+	print_matrix(cstack[-2])
+
 def new_matrix(rows = 4, cols = 4):
     m = []
     for c in range( cols ):
